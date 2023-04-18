@@ -1,0 +1,1 @@
+export const baseUrl = 'https://hoangtv.hoangtrinh4.repl.co/';
