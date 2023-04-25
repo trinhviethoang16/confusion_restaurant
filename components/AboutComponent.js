@@ -4,9 +4,27 @@ import { Card, ListItem, Avatar } from 'react-native-elements';
 import { ScrollView } from 'react-native-virtualized-view';
 //import { LEADERS } from '../shared/leaders';
 import { baseUrl } from '../shared/baseUrl';
+import Loading from './LoadingComponent';
 
 class RenderHistory extends Component {
   render() {
+    if (this.props.isLoading) {
+      return (
+        <Card>
+          <Card.Title>Corporate Leadership</Card.Title>
+          <Card.Divider />
+          <Loading />
+        </Card>
+      );
+    } else if (this.props.errMess) {
+      return (
+        <Card>
+          <Card.Title>Corporate Leadership</Card.Title>
+          <Card.Divider />
+          <Text>{this.props.errMess}</Text>
+        </Card>
+      );
+    } else {
     return (
       <Card>
         <Card.Title>Our History</Card.Title>
@@ -15,6 +33,7 @@ class RenderHistory extends Component {
         <Text style={{ margin: 10 }}>The restaurant traces its humble beginnings to The Frying Pan, a successful chain started by our CEO, Mr. Peter Pan, that featured for the first time the worlds best cuisines in a pan.</Text>
       </Card>
     );
+    }
   }
 }
 
@@ -62,7 +81,11 @@ class About extends Component {
     return (
       <ScrollView>
         <RenderHistory />
-        <RenderLeadership leaders={this.props.leaders.leaders} />
+        <RenderLeadership
+          leaders={this.props.leaders.leaders}
+          isLoading={this.props.leaders.isLoading}
+          errMess={this.props.leaders.errMess}
+        />
       </ScrollView>
     );
   }

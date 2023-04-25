@@ -65,3 +65,33 @@ const addComments = (comments) => ({
   type: ActionTypes.ADD_COMMENTS,
   payload: comments
 });
+// promotions
+export const fetchPromos = () => (dispatch) => {
+  dispatch(promosLoading());
+  return fetch(baseUrl + 'promotions')
+    .then((response) => {
+      if (!response.ok) throw Error('Error ' + response.status + ': ' + response.statusText);
+      else return response.json();
+    })
+    .then((promos) => dispatch(addPromos(promos)))
+    .catch((error) => dispatch(promosFailed(error.message)));
+};
+const promosLoading = () => ({
+  type: ActionTypes.PROMOS_LOADING
+});
+const promosFailed = (errmess) => ({
+  type: ActionTypes.PROMOS_FAILED,
+  payload: errmess
+});
+const addPromos = (promos) => ({
+  type: ActionTypes.ADD_PROMOS,
+  payload: promos
+});
+// favorites
+export const postFavorite = (dishId) => (dispatch) => {
+  dispatch(addFavorite(dishId));
+};
+const addFavorite = (dishId) => ({
+  type: ActionTypes.ADD_FAVORITE,
+  payload: dishId
+});
