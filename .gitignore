@@ -1,3 +1,4 @@
+node_modules/
 .expo/
 dist/
 npm-debug.*
@@ -14,4 +15,3 @@ web-build/
 
 # Temporary files created by Metro to check the health of the file watcher
 .metro-health-check*
-node_modules
