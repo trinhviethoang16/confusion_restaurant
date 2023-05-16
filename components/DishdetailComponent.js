@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList } from 'react-native';
-import { Card, Image, Icon } from 'react-native-elements';
+import { View, Text, FlatList, Modal, Button } from 'react-native';
+import { Card, Image, Icon, Rating, Input } from 'react-native-elements';
 import { ScrollView } from 'react-native-virtualized-view';
 //import { DISHES } from '../shared/dishes';
 //import {COMMENTS} from '../shared/comments'
@@ -23,7 +23,7 @@ class RenderComments extends Component {
     return (
       <View key={index} style={{ margin: 10 }}>
         <Text style={{ fontSize: 14 }}>{item.comment}</Text>
-        <Text style={{ fontSize: 12 }}>{item.rating} Stars</Text>
+        <Rating startingValue={item.rating} imageSize={16} readonly style={{ flexDirection: 'row' }} />
         <Text style={{ fontSize: 12 }}>{'-- ' + item.author + ', ' + item.date} </Text>
       </View>
     );
@@ -40,15 +40,59 @@ class RenderDish extends Component {
             <Card.FeaturedTitle>{dish.name}</Card.FeaturedTitle>
           </Image>
           <Text style={{ margin: 10 }}>{dish.description}</Text>
-          <Icon raised reverse type='font-awesome' color='#f50'
-            name={this.props.favorite ? 'heart' : 'heart-o'}
+          <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+          <Icon raised reverse name={this.props.favorite ? 'heart' : 'heart-o'} 
+              type='font-awesome' 
+              color='#f50'
             onPress={() => this.props.favorite ? alert('Already favorite') : this.props.onPressFavorite()} />
+          <Icon raised reverse 
+              name='pencil' 
+              type='font-awesome' 
+              color='#f50'
+            onPress={() => this.props.onPressComment()} />
+         </View>
         </Card>
       );
     }
     return (<View />);
   }
 }
+class ModalContent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      rating: 3,
+      author: '',
+      comment: ''
+    };
+  }
+  render() {
+    return (
+      <View style={{ justifyContent: 'center', margin: 20 }}>
+        <Rating startingValue={this.state.rating} showRating={true}
+          onFinishRating={(value) => this.setState({ rating: value })} />
+        <View style={{ height: 20 }} />
+        <Input value={this.state.author} placeholder='Author' leftIcon={{ name: 'user-o', type: 'font-awesome' }}
+          onChangeText={(text) => this.setState({ author: text })} />
+        <Input value={this.state.comment} placeholder='Comment' leftIcon={{ name: 'comment-o', type: 'font-awesome' }}
+          onChangeText={(text) => this.setState({ comment: text })} />
+        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+          <Button title='SUBMIT' color='#7cc'
+            onPress={() => this.handleSubmit()} />
+          <View style={{ width: 10 }} />
+          <Button title='CANCEL' color='#7cc'
+            onPress={() => this.props.onPressCancel()} />
+        </View>
+      </View>
+    );
+  }
+  handleSubmit() {
+    // alert(this.props.dishId + ':' + this.state.rating + ':' + this.state.author + ':' + this.state.comment);
+    this.props.postComment(this.props.dishId, this.state.rating, this.state.author, this.state.comment);
+    this.props.onPressCancel();
+  }
+}
+
 
 // redux
 import { connect } from 'react-redux';
@@ -60,19 +104,18 @@ const mapStateToProps = (state) => {
   }
 };
 
-import { postFavorite } from '../redux/ActionCreators';
+import { postFavorite, postComment } from '../redux/ActionCreators';
 const mapDispatchToProps = (dispatch) => ({
-  postFavorite: (dishId) => dispatch(postFavorite(dishId))
+  postFavorite: (dishId) => dispatch(postFavorite(dishId)),
+  postComment: (dishId, rating, author, comment) => dispatch(postComment(dishId, rating, author, comment))
 });
 
 class Dishdetail extends Component {
   constructor(props) {
     super(props);
-    // this.state = {
-    //   dishes: DISHES,
-    //   comments: COMMENTS,
-    //   favorites:[]
-    // };
+    this.state = {
+      showModal: false
+    };
   }
   render() {
     const dishId = parseInt(this.props.route.params.dishId);
@@ -82,8 +125,13 @@ class Dishdetail extends Component {
     
     return (
       <ScrollView>
-        <RenderDish dish={dish} favorite={favorite} onPressFavorite={() => this.markFavorite(dishId)} />
+        <RenderDish dish={dish} favorite={favorite}  onPressComment={() => this.setState({ showModal: true })} />
         <RenderComments comments={comments} />
+        <Modal animationType={'slide'} visible={this.state.showModal}
+          onRequestClose={() => this.setState({ showModal: false })}>
+          <ModalContent dishId={dishId} 
+            onPressCancel={() => this.setState({ showModal: false })} postComment={this.props.postComment}/>
+        </Modal>
       </ScrollView>
     );
   }

@@ -61,9 +61,26 @@ const commentsFailed = (errmess) => ({
   type: ActionTypes.COMMENTS_FAILED,
   payload: errmess
 });
-const addComments = (comments) => ({
+const addComments = (comments) => ({//lấy từ server
   type: ActionTypes.ADD_COMMENTS,
   payload: comments
+});
+export const postComment = (dishId, rating, author, comment) => (dispatch) => {
+  var newcmt = { dishId: dishId, rating: rating, author: author, comment: comment, date: new Date().toISOString() };
+  fetch(baseUrl + 'comments', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(newcmt)
+  }).then((response) => {
+      if (!response.ok) throw Error('Error ' + response.status + ': ' + response.statusText);
+      else return response.json();
+    })
+    .then((cmt) => dispatch(addComment(cmt)))
+    .catch((error) => dispatch(commentsFailed(error.message)));
+};
+const addComment = (newcmt) => ({//lấy từ form
+  type: ActionTypes.ADD_COMMENT,
+  payload: newcmt
 });
 // promotions
 export const fetchPromos = () => (dispatch) => {
