@@ -5,19 +5,22 @@ import { Picker } from '@react-native-picker/picker';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { format } from 'date-fns';
 
+
+
 class ModalContent extends Component {
-    render() {
-      return (
-        <View style={styles.modal}>
-          <Text style={styles.modalTitle}>Your Reservation</Text>
-          <Text style={styles.modalText}>Number of Guests: {this.props.guests}</Text>
-          <Text style={styles.modalText}>Smoking?: {this.props.smoking ? 'Yes' : 'No'}</Text>
-          <Text style={styles.modalText}>Date and Time: {format(this.props.date, 'dd/MM/yyyy - HH:mm')}</Text>
-          <Button title='Close' color='#7cc' onPress={() => this.props.onPressClose()} />
-        </View>
-      );
-    }
+  render() {
+    return (
+      <View style={styles.modal}>
+        <Text style={styles.modalTitle}>Your Reservation</Text>
+        <Text style={styles.modalText}>Number of Guests: {this.props.guests}</Text>
+        <Text style={styles.modalText}>Smoking?: {this.props.smoking ? 'Yes' : 'No'}</Text>
+        <Text style={styles.modalText}>Date and Time: {format(this.props.date, 'dd/MM/yyyy - HH:mm')}</Text>
+        <Button title='Close' color='#7cc' onPress={() => this.props.onPressClose()} />
+      </View>
+    );
+  }
 }
+
 
 class Reservation extends Component {
   constructor(props) {
@@ -59,16 +62,18 @@ class Reservation extends Component {
         <View style={styles.formRow}>
           <Button title='Reserve' color='#7cc' onPress={() => this.handleReservation()} />
         </View>
+
         <Modal animationType={'slide'} visible={this.state.showModal}
           onRequestClose={() => this.setState({ showModal: false })}>
           <ModalContent guests={this.state.guests} smoking={this.state.smoking} date={this.state.date}
             onPressClose={() => this.setState({ showModal: false })} />
         </Modal>
+
       </ScrollView>
     );
   }
   handleReservation() {
-    //alert(JSON.stringify(this.state));
+    // alert(JSON.stringify(this.state));
     this.setState({ showModal: true });
   }
 }

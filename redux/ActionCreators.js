@@ -65,6 +65,7 @@ const addComments = (comments) => ({//lấy từ server
   type: ActionTypes.ADD_COMMENTS,
   payload: comments
 });
+
 export const postComment = (dishId, rating, author, comment) => (dispatch) => {
   var newcmt = { dishId: dishId, rating: rating, author: author, comment: comment, date: new Date().toISOString() };
   fetch(baseUrl + 'comments', {
@@ -78,6 +79,7 @@ export const postComment = (dishId, rating, author, comment) => (dispatch) => {
     .then((cmt) => dispatch(addComment(cmt)))
     .catch((error) => dispatch(commentsFailed(error.message)));
 };
+
 const addComment = (newcmt) => ({//lấy từ form
   type: ActionTypes.ADD_COMMENT,
   payload: newcmt
@@ -110,5 +112,9 @@ export const postFavorite = (dishId) => (dispatch) => {
 };
 const addFavorite = (dishId) => ({
   type: ActionTypes.ADD_FAVORITE,
+  payload: dishId
+});
+export const deleteFavorite = (dishId) => ({
+  type: ActionTypes.DELETE_FAVORITE,
   payload: dishId
 });
