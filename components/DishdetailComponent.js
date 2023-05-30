@@ -7,28 +7,36 @@ import * as Animatable from 'react-native-animatable';
 
 class RenderDish extends Component {
   render() {
-// gesture
-const recognizeDrag = ({ moveX, moveY, dx, dy }) => {
-  if (dx < -200) return 1; // right to left
-  return 0;
-};
-const panResponder = PanResponder.create({
-  onStartShouldSetPanResponder: (e, gestureState) => { return true; },
-  onPanResponderEnd: (e, gestureState) => {
-    if (recognizeDrag(gestureState) === 1) {
-      Alert.alert(
-        'Add Favorite',
-        'Are you sure you wish to add ' + dish.name + ' to favorite?',
-        [
-          { text: 'Cancel', onPress: () => { /* nothing */ } },
-          { text: 'OK', onPress: () => { this.props.favorite ? alert('Already favorite') : this.props.onPressFavorite() } },
-        ]
-      );
-    }
-    return true;
-  }
-});
-    //render
+    // gesture
+    const recognizeDrag = ({ moveX, moveY, dx, dy }) => {
+      if (dx < -200) return 1; // right to left
+      return 0;
+    };
+
+    const recognizeComment = ({ moveX, moveY, dx, dy }) => {
+      if (dx > 200) return true; // left to right
+      return false;
+    };
+
+    const panResponder = PanResponder.create({
+      onStartShouldSetPanResponder: (e, gestureState) => { return true; },
+      onPanResponderEnd: (e, gestureState) => {
+        if (recognizeDrag(gestureState) === 1) {
+          Alert.alert(
+            'Add Favorite',
+            'Are you sure you wish to add ' + dish.name + ' to favorite?',
+            [
+              { text: 'Cancel', onPress: () => { /* nothing */ } },
+              { text: 'OK', onPress: () => { this.props.favorite ? alert('Already favorite') : this.props.onPressFavorite() } },
+            ]
+          );
+        } else if (recognizeComment(gestureState)) {
+          this.props.onPressComment();
+        }
+        return true;
+      }
+    });
+
     const dish = this.props.dish;
     if (dish != null) {
       return (
@@ -143,22 +151,19 @@ class Dishdetail extends Component {
       <ScrollView>
         <Animatable.View animation='fadeInDown' duration={2000} delay={1000}>
           <RenderDish
-          dish={this.props.dishes.dishes[dishId]}
-          favorite={this.props.favorites.some((el) => el === dishId)}
-          onPressFavorite={() => this.markFavorite(dishId)}
-          onPressComment={() => this.setState({ showModal: true })}
-        />
+            dish={this.props.dishes.dishes[dishId]}
+            favorite={this.props.favorites.some((el) => el === dishId)}
+            onPressFavorite={() => this.markFavorite(dishId)}
+            onPressComment={() => this.setState({ showModal: true })}
+          />
         </Animatable.View>
-        
-
-        <Animatable.View animation='fadeInDown' duration={2000} delay={1000}>
+        <Animatable.View animation='fadeInUp' duration={2000} delay={1000}>
           <RenderComments
-          comments={this.props.comments.comments.filter(
-            (comment) => comment.dishId === dishId
-          )}
-        />
+            comments={this.props.comments.comments.filter(
+              (comment) => comment.dishId === dishId
+            )}
+          />
         </Animatable.View>
-        
         <Modal animationType={'slide'} visible={this.state.showModal} onRequestClose={() => this.setState({ showModal: false })}>
           <ModalContent dishId={dishId} onPressCancel={() => this.setState({ showModal: false })} postComment={this.props.postComment} />
         </Modal>
