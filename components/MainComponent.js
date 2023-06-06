@@ -5,13 +5,32 @@ import { View, Text, Linking } from 'react-native';
 import { Icon, Image } from 'react-native-elements';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 import { baseUrl } from '../shared/baseUrl';
-
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Menu from './MenuComponent';
 import Dishdetail from './DishdetailComponent';
 import Home from './HomeComponent';
 import About from './AboutComponent';
 import Contact from './ContactComponent';
 import Favorites from './FavoriteComponent';
+import Register from './RegisterComponent';
+
+function TabNavigatorScreen() {
+  const TabNavigator = createBottomTabNavigator();
+  return (
+    <TabNavigator.Navigator initialRouteName='Login'>
+      <TabNavigator.Screen name='Login' component={Login}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (<Icon name='sign-in' type='font-awesome' size={size} color={color} />)
+        }} />
+      <TabNavigator.Screen name='Register' component={Register}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (<Icon name='user-plus' type='font-awesome' size={size} color={color} />)
+        }} />
+    </TabNavigator.Navigator>
+  );
+}
 
 // redux
 import { connect } from 'react-redux';
@@ -36,7 +55,25 @@ function ReservationNavigatorScreen() {
     </ReservationNavigator.Navigator>
   );
 }
-
+//Login
+import Login from './LoginComponent';
+function LoginNavigatorScreen() {
+  const LoginNavigator = createStackNavigator();
+  return (
+    <LoginNavigator.Navigator initialRouteName='LoginRegister'
+      screenOptions={{
+        headerStyle: { backgroundColor: '#7cc' },
+        headerTintColor: '#fff',
+        headerTitleStyle: { color: '#fff' }
+      }}>
+      <LoginNavigator.Screen name='LoginRegister' component={TabNavigatorScreen}
+        options={({ navigation }) => ({
+          headerTitle: 'Login',
+          headerLeft: () => (<Icon name='menu' size={36} color='#fff' onPress={() => navigation.toggleDrawer()} />)
+        })} />
+    </LoginNavigator.Navigator>
+  );
+}
 function HomeNavigatorScreen() {
   const HomeNavigator = createStackNavigator();
   return (
@@ -101,7 +138,7 @@ function CustomDrawerContent(props) {
         <Image source={{ uri: baseUrl + 'images/logo.png' }} style={{ margin: 10, width: 80, height: 60 }} />
         </View>
         <View style={{ flex: 2 }}>
-          <Text style={{ color: '#fff', fontSize: 22, fontWeight: 'bold' }}>HOANG.TV</Text>
+          <Text style={{ color: '#fff', fontSize: 22, fontWeight: 'bold' }}>HoangTV</Text>
         </View>
       </View>
       <DrawerItemList {...props} />
@@ -142,10 +179,15 @@ function MainNavigatorScreen() {
           title: 'Reserve Table', headerShown: false,
           drawerIcon: ({ focused, size }) => (<Icon name='cutlery' type='font-awesome' size={size} color={focused ? '#7cc' : '#ccc'} />)
         }} />
-    <MainNavigator.Screen name='FavoritesScreen' component={FavoritesNavigatorScreen}
+      <MainNavigator.Screen name='FavoritesScreen' component={FavoritesNavigatorScreen}
         options={{
           title: 'My Favorites', headerShown: false,
           drawerIcon: ({ focused, size }) => (<Icon name='heart' type='font-awesome' size={size} color={focused ? '#7cc' : '#ccc'} />)
+        }} />
+         <MainNavigator.Screen name='LoginScreen' component={LoginNavigatorScreen}
+        options={{
+          title: 'Login', headerShown: false,
+          drawerIcon: ({ focused, size }) => (<Icon name='sign-in' type='font-awesome' size={size} color={focused ? '#7cc' : '#ccc'} />)
         }} />
     </MainNavigator.Navigator>
   );  
