@@ -55,6 +55,7 @@ function ReservationNavigatorScreen() {
     </ReservationNavigator.Navigator>
   );
 }
+
 //Login
 import Login from './LoginComponent';
 function LoginNavigatorScreen() {
@@ -111,7 +112,6 @@ function AboutNavigatorScreen() {
   );
 }
 
-
 function ContactNavigatorScreen() {
   const ContactNavigator = createStackNavigator();
   return (
@@ -148,7 +148,6 @@ function CustomDrawerContent(props) {
     </DrawerContentScrollView>
   );
 }
-
 
 function MainNavigatorScreen() {
   const MainNavigator = createDrawerNavigator();
@@ -235,7 +234,6 @@ function FavoritesNavigatorScreen() {
     </FavoritesNavigator.Navigator>
   );
 }
-
 
 //redux 
 const mapDispatchToProps = (dispatch) => ({
