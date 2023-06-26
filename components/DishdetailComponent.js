@@ -4,6 +4,35 @@ import { Card, Image, Icon, Input, Rating } from 'react-native-elements';
 import { ScrollView } from 'react-native-virtualized-view';
 import { baseUrl } from '../shared/baseUrl';
 import * as Animatable from 'react-native-animatable';
+import { SliderBox } from 'react-native-image-slider-box';
+
+class RenderSlider extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      width: 30,
+      height: 0
+    };
+  }
+  render() {
+    const images = [
+      baseUrl + this.props.dish.image,
+      baseUrl + 'images/buffet.png',
+      baseUrl + 'images/logo.png'
+    ];
+    return (
+      <Card onLayout={this.onLayout}>
+        <SliderBox images={images} parentWidth={this.state.width - 30} />
+      </Card>
+    );
+  }
+  onLayout = (evt) => {
+    this.setState({
+      width: evt.nativeEvent.layout.width,
+      height: evt.nativeEvent.layout.height,
+    });
+  };
+}
 
 class RenderDish extends Component {
   render() {
@@ -37,13 +66,16 @@ class RenderDish extends Component {
       }
     });
 
+    //render
     const dish = this.props.dish;
     if (dish != null) {
       return (
         <Card {...panResponder.panHandlers}>
-          <Image source={{ uri: baseUrl + dish.image }} style={{ width: '100%', height: 100, flexGrow: 1, alignItems: 'center', justifyContent: 'center' }}>
+          {/* <Image source={{ uri: baseUrl + dish.image }} style={{ width: '100%', height: 100, flexGrow: 1, alignItems: 'center', justifyContent: 'center' }}>
             <Card.FeaturedTitle>{dish.name}</Card.FeaturedTitle>
-          </Image>
+          </Image> */}
+          <Card.Title>{dish.name}</Card.Title>
+          <Card.Divider />
           <Text style={{ margin: 10 }}>{dish.description}</Text>
           <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
             <Icon raised reverse name={this.props.favorite ? 'heart' : 'heart-o'} type='font-awesome' color='#f50'
@@ -149,6 +181,9 @@ class Dishdetail extends Component {
 
     return (
       <ScrollView>
+        <Animatable.View animation='flipInY' duration={2000} delay={1000}>
+          <RenderSlider dish={dish} />
+        </Animatable.View>
         <Animatable.View animation='fadeInDown' duration={2000} delay={1000}>
           <RenderDish
             dish={this.props.dishes.dishes[dishId]}
